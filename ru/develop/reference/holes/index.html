@@ -1888,6 +1888,11 @@ Agda в режиме термов.</p>
   (например, <code class="language-rzk highlight">t : <span class="kt">2</span></code>);</li>
 <li><strong>tope context</strong> перечисляет топовые предположения, действующие в месте дырки.</li>
 </ul>
+<p>Под <a href="../modalities.rzk/">модальностью</a> запись, которую нельзя использовать в
+месте дырки, всё равно показывается, с пометкой <code>×</code>, объявленной модальностью и
+накопленными с тех пор замками, например <code>× B : U  [modality: ᵒᵖ, locks: _id]</code>.
+То же относится к топовому предположению, которое не действует. Доступная запись
+с модальностью, отличной от <code>_id</code>, показывается с тем же суффиксом, но без пометки.</p>
 <p>Показываются только <em>локальные</em> гипотезы. Глобальное окружение, то есть все
 предыдущие определения, намеренно исключается, чтобы цель оставалась читаемой
 даже внутри большой разработки.</p>
@@ -1923,13 +1928,20 @@ stderr. Команда завершается с ненулевым кодом �
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span><span class="nt">"hole"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 </span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"b"</span><span class="p">,</span>
 </span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="nt">"goal"</span><span class="p">:</span><span class="w"> </span><span class="s2">"B"</span><span class="p">,</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">    </span><span class="nt">"termVars"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p"</span><span class="p">,</span><span class="w"> </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Σ (x₁ : A), B"</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">],</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span><span class="nt">"cubeVars"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">    </span><span class="nt">"topes"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
-</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">    </span><span class="nt">"shape"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
-</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">  </span><span class="p">}</span>
-</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="p">}</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">    </span><span class="nt">"termVars"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"p"</span><span class="p">,</span><span class="w"> </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Σ (x₁ : A), B"</span><span class="p">,</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">                    </span><span class="nt">"modality"</span><span class="p">:</span><span class="w"> </span><span class="s2">"_id"</span><span class="p">,</span><span class="w"> </span><span class="nt">"locks"</span><span class="p">:</span><span class="w"> </span><span class="s2">"_id"</span><span class="p">,</span><span class="w"> </span><span class="nt">"accessible"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">],</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">    </span><span class="nt">"cubeVars"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">    </span><span class="nt">"topes"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">    </span><span class="nt">"topeInfo"</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">    </span><span class="nt">"shape"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">  </span><span class="p">}</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="p">}</span>
 </span></code></pre></div>
+<p>Каждая переменная терма и куба несёт объявленную модальность <code class="language-json highlight"><span class="s2">"modality"</span></code>,
+накопленные с тех пор замки <code class="language-json highlight"><span class="s2">"locks"</span></code> и признак доступности в месте дырки
+<code class="language-json highlight"><span class="s2">"accessible"</span></code>. <code class="language-json highlight"><span class="s2">"topes"</span></code> перечисляет действующие топовые
+предположения в виде строк. <code class="language-json highlight"><span class="s2">"topeInfo"</span></code> перечисляет все топовые
+предположения, каждое — объектом с полем <code class="language-json highlight"><span class="s2">"tope"</span></code> и теми же тремя полями.</p>
 <h2 id="_5">Интеграция с инструментами<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <p>Та же информация о цели и контексте доступна инструментам как структурированные
 данные, а не только как текст. Поэтому редакторы и Rzk Playground могут

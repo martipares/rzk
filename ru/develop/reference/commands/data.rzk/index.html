@@ -1355,6 +1355,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#-" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Поля-формы
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1860,7 +1871,7 @@
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>compute with &lt;name&gt; : &lt;type&gt;
 </span></code></pre></div>
 <h2 id="_2">Описание<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>Объявление вводит формирователь типа, по одному обычному имени верхнего уровня на конструктор и два порождённых элиминатора: принцип индукции <code>ind-&lt;name&gt;</code> и его не зависимую версию <code>rec-&lt;name&gt;</code>. Все они живут в одном пространстве имён с остальными именами верхнего уровня, поэтому совпадение с существующим именем — ошибка. Вторая форма (без <code>:=</code>) объявляет пустое семейство.</p>
+<p>Объявление вводит формирователь типа, по одному обычному имени верхнего уровня на конструктор и порождённые элиминаторы: принцип индукции <code>ind-&lt;name&gt;</code> и его не зависимую версию <code>rec-&lt;name&gt;</code>, а для объявления без конструкторов путей — их <a href="../../match.rzk/#modal-matching">модальные варианты</a> <code>ind-op-&lt;name&gt;</code>, <code>rec-op-&lt;name&gt;</code>, <code>ind-b-&lt;name&gt;</code> и <code>rec-b-&lt;name&gt;</code>. Все они живут в одном пространстве имён с остальными именами верхнего уровня, поэтому совпадение с существующим именем — ошибка. Вторая форма (без <code>:=</code>) объявляет пустое семейство.</p>
 <p>Например:</p>
 <div class="language-rzk highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">#lang</span><span class="p"> </span><span class="s">rzk-1</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>#data bool := false | true
@@ -1935,7 +1946,7 @@
 </span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>  | squash <span class="p">(</span>x <span class="p">:</span> trunc A) <span class="p">(</span>y <span class="p">:</span> trunc A) : x =_{trunc A} y
 </span></code></pre></div>
 <h2 id="_4">Клаузы переприписывания<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>Объявление может заканчиваться клаузами переприписывания: <code>eliminate with</code> называет один из двух порождённых элиминаторов, <code>compute with</code> — порождённое правило вычисления, и обе задают тип записью пользователя. Проверяется, что эта запись определительно равна каноническому порождённому типу, при этом формирователь типа и конструкторы находятся в области видимости. Поскольку определительно равные типы взаимозаменяемы, значения и правила вычисления не затрагиваются; меняется только сохранённая запись типа, и она распространяется всюду, где тип отображается, например в подсказки при наведении и в цели. Если запись не является определительно равной каноническому типу, ошибка печатает канонический тип.</p>
+<p>Объявление может заканчиваться клаузами переприписывания: <code>eliminate with</code> называет один из порождённых элиминаторов, <code>compute with</code> — порождённое правило вычисления, и обе задают тип записью пользователя. Проверяется, что эта запись определительно равна каноническому порождённому типу, при этом формирователь типа и конструкторы находятся в области видимости. Поскольку определительно равные типы взаимозаменяемы, значения и правила вычисления не затрагиваются; меняется только сохранённая запись типа, и она распространяется всюду, где тип отображается, например в подсказки при наведении и в цели. Если запись не является определительно равной каноническому типу, ошибка печатает канонический тип.</p>
 <p>Важнее всего это для конструкторов путей, чьи канонические типы раскрывают транспорт и <code>ap</code>/<code>apd</code> через <code class="language-rzk highlight"><span class="s">idJ</span></code>. С библиотечными <code>transport</code>, <code>ap</code> и <code>apd</code> (каждый определим из <code class="language-rzk highlight"><span class="s">idJ</span></code> до любых объявлений) окружность читается так:</p>
 <div class="language-rzk highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:transport" id="define:transport" style="visibility: visible; position: relative; color: inherit">transport</a></span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>  <span class="p">( </span>A <span class="p">:</span> <span class="kt">U</span>) <span class="p">(</span>C <span class="p">:</span> A → <span class="kt">U</span>) <span class="p">(</span>x y <span class="p">:</span> A) <span class="p">(</span>p <span class="p">:</span> x =_{A} y) <span class="p">(</span>u <span class="p">:</span> C x)
@@ -1978,9 +1989,29 @@
 <p>На данный момент:</p>
 <ul>
 <li>рекурсивные поля должны быть непосредственными: положительное поле функционального типа, как <code class="language-rzk highlight">node <span class="p">(</span>f <span class="p">:</span> A → tree)</code> (форма W-типа), пока не поддерживается;</li>
-<li>индексы должны быть обычными типами (индексы-кубы и индексы-формы не поддерживаются), и конструкторы не могут принимать аргументы-кубы и аргументы-формы (над направленным интервалом они объявляли бы направленные клетки);</li>
+<li>каждая привязка <code>#data</code> проверяется на принадлежность слою, на элаборированной форме, поэтому правило не зависит от написания. <em>Параметр</em> может быть типом, <code class="language-rzk highlight"><span class="kt">CUBE</span></code>, <code class="language-rzk highlight"><span class="kt">TOPE</span></code> или семейством топов <code class="language-rzk highlight">I → <span class="kt">TOPE</span></code> — это виды параметров метатеоретического слоя параметров, от которых зависит общая реализация ниже. <em>Индекс</em> обязан быть типом, и только: точки кубов, точки форм, <code class="language-rzk highlight"><span class="kt">CUBE</span></code> и семейства топов отвергаются (семейство, меняющееся вдоль формы, — это то, для чего есть типы-расширения). <em>Поле</em> может быть типом, точкой куба или точкой формы, и ничем больше: поле типа <code class="language-rzk highlight"><span class="kt">CUBE</span></code> или семейства топов хранило бы жителя слоя кубов или топов внутри данных слоя типов. Модальные виды (<code class="language-rzk highlight"><span class="nd">_op</span> <span class="kt">TOPE</span></code>, <code class="language-rzk highlight"><span class="nd">_b</span> <span class="kt">CUBE</span></code>, <code class="language-rzk highlight"><span class="nd">_#</span> (I → <span class="kt">TOPE</span>)</code>, семейства в них) могут быть параметрами, как экспериментальная часть <a href="../../modalities.rzk/">модального слоя</a>, и отвергаются как индексы и поля;</li>
+<li>модальное поле <em>типа</em> (<code class="language-rzk highlight">(x :_b A)</code>) пока не поддерживается: поле типа может быть рекурсивным, а учёт рекурсии и позитивности не смотрит сквозь модальную привязку. Модальное поле <em>куба</em> или <em>формы</em> (<code class="language-rzk highlight">(t :_b I)</code>, <code class="language-rzk highlight">(t :_b Φ)</code>, <code class="language-rzk highlight">(t :_b I | φ)</code>) допустимо — такое поле не может быть рекурсивным — и элиминатор связывает его с его модальностью, так что дисциплина замков <a href="../../modalities.rzk/">модальностей</a> действует внутри ветви. Различие проводится после элаборации, поэтому оно не зависит от написания;</li>
 <li>конструкторы путей не поддерживаются в индексированных семействах, и поддерживаются только пути между точками: носитель, сам являющийся типом-тождеством, или поле типа-тождества (высший путь, как в 0-усечении) отвергается.</li>
 </ul>
+<h2 id="-">Поля-формы<a class="headerlink" href="#-" title="Permanent link">&para;</a></h2>
+<p>Конструктор может принимать точку <em>формы</em>. Объявляемый тип тогда является реализацией этой формы: он свободно порождён семейством точек, индексированным формой, без каких-либо отождествлений между ними.</p>
+<p>Форма — это предикат на кубе, поэтому она записывается как <code class="language-rzk highlight">I → <span class="kt">TOPE</span></code>, ровно так же, как <code class="language-rzk highlight">Δ¹</code> и <code class="language-rzk highlight">Λ²₁</code>. Общая реализация — это</p>
+<div class="language-rzk highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>#data Shape <span class="p">(</span>I <span class="p">:</span> <span class="kt">CUBE</span>) <span class="p">(</span>phi <span class="p">:</span> I → <span class="kt">TOPE</span>) := point <span class="p">(</span>t <span class="p">:</span> phi)
+</span></code></pre></div>
+<p>а отображение из неё — это сечение типа-расширения:</p>
+<div class="language-rzk highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>rec-Shape : <span class="p">(</span>I <span class="p">:</span> <span class="kt">CUBE</span>) → <span class="p">(</span>phi <span class="p">:</span> I → <span class="kt">TOPE</span>) → <span class="p">(</span>C <span class="p">:</span> <span class="kt">U</span>)
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>          → <span class="p">(</span>(t <span class="p">:</span> I | phi t) → C) → Shape I phi → C
+</span></code></pre></div>
+<p>Вычисление строгое на синтаксической точке: <code class="language-rzk highlight">rec-Shape I phi C m (point I phi p) <span class="sx">≡</span> m p</code>.</p>
+<p>Поле можно равным образом записать с формой инлайн, <code class="language-rzk highlight"><span class="p">(</span>t <span class="p">:</span> I | φ)</code>, или с голым кубом, <code class="language-rzk highlight"><span class="p">(</span>t <span class="p">:</span> I)</code>, что есть форма с топом <code class="language-rzk highlight"><span class="m">⊤</span></code>:</p>
+<div class="language-rzk highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>#data Arr := seg <span class="p">(</span>t <span class="p">:</span> <span class="kt">2</span> | <span class="m">⊤</span>)
+</span></code></pre></div>
+<p>Сопоставление связывает переменную куба и приносит топ в ветвь, поэтому за полем-формой могут идти поля, упоминающие эту переменную:</p>
+<div class="language-rzk highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>#data Total <span class="p">(</span>A <span class="p">:</span> <span class="p">(</span>t <span class="p">:</span> <span class="kt">2</span>) → <span class="kt">U</span>) := tot <span class="p">(</span>t <span class="p">:</span> <span class="kt">2</span> | <span class="m">⊤</span>) <span class="p">(</span>a <span class="p">:</span> A t)
+</span></code></pre></div>
+<p>— это тотальное пространство семейства над формой, не имеющее другого написания.</p>
+<p>Конструкция и её метатеория принадлежат Кудасову, <a href="https://fizruk.github.io/files/%5Bnotes%5D%20N.Kudasov.%20Booleans%2C%20coproducts%20and%20shape%20types%20in%20type%20theory%20for%20synthetic%20%E2%88%9E-categories.pdf"><em>Booleans, coproducts and shape types in type theory for synthetic ∞-categories</em></a>, §4 "Shapes as types".</p>
+<p>Одного эта конструкция намеренно <strong>не</strong> даёт: полю нельзя приписать <em>уравнения граней</em>, а именно они объявляли бы направленную клетку, такую как направленная окружность. Элиминатору таких клеток нужна цель, являющаяся типом Сигала или ковариантным семейством, и эта метатеория открыта.</p>
 <p>Отметим также, что индуктивный тип приходит ровно со своим принципом индукции; взаимодействие типа с симплициальной структурой — отдельный вопрос. См. предупреждение о дискретности в разделе <a href="../../../getting-started/dependent-types.rzk/#booleans">Зависимые типы</a>.</p>
 
 

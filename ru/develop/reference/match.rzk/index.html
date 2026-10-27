@@ -838,6 +838,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#modal-matching" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Модальное сопоставление
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#_2" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1809,96 +1820,126 @@
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  := <span class="s">refl</span>
 </span></code></pre></div>
 <p>Ветви должны находиться в биекции с конструкторами: каждый конструктор встречается ровно один раз (в любом порядке), и число связываемых переменных совпадает с арностью его метода. Вложенных образцов и подстановочных знаков нет.</p>
+<h2 id="modal-matching">Модальное сопоставление<a class="headerlink" href="#modal-matching" title="Permanent link">&para;</a></h2>
+<p>Форма <code>match μ x (...)</code> проверяет разбираемое выражение <code>x</code> под
+модальностью <code>μ</code> и использует элиминатор, сгенерированный для этой модальности.
+Тип <code>D</code> без конструкторов путей порождает <code>ind-D</code> и <code>rec-D</code> для тождественной
+модальности, а также <code>ind-op-D</code>/<code>rec-op-D</code> и <code>ind-b-D</code>/<code>rec-b-D</code>. Это
+принципы «чёткой» (crisp) индукции, верные для левых сопряжённых <code>ᵒᵖ</code> и <code>♭</code>.
+Для <code>♯</code> их нет: как правый сопряжённый, <code>♯</code> не сохраняет копроизведения и
+рекурсию, поэтому <code>match _# x (...)</code> отвергается.</p>
+<div class="language-rzk highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>#data Nat := zero | suc <span class="p">(</span>pred <span class="p">:</span> Nat)
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:modal-predecessor" id="define:modal-predecessor" style="visibility: visible; position: relative; color: inherit">modal-predecessor</a></span> (n :_b Nat) : <span class="nd">_b</span> Nat
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  := match <span class="nd">_b</span> n
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>       (zero =&gt; <span class="nf"><a href="#define:mod" id="define:mod" style="visibility: visible; position: relative; color: inherit">mod</a></span> <span class="nd">_b</span> zero
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>       | suc pred _ =&gt; <span class="nf"><a href="#define:mod" id="define:mod" style="visibility: visible; position: relative; color: inherit">mod</a></span> <span class="nd">_b</span> pred)
+</span></code></pre></div>
+<p>Если поле конструктора объявлено под модальностью <code>ν</code>, его биндер в модальном
+элиминаторе и соответствующая переменная ветви получают <code>μ · ν</code>.
+Сгенерированные индуктивные гипотезы остаются обычными; <code>_</code> в примере — такая
+неиспользуемая гипотеза. Параметры типа данных, индексы, shape-поля и их guards
+также наследуют <code>μ</code>.</p>
+<p>Форма с явным мотивом записывается <code>match μ x into motive (...)</code>. Для
+неиндексированного типа <code>D</code> мотив имеет тип <code>(z :_μ D) → U</code>. Для
+индексированного типа каждая связывающая переменная телескопа мотива наследует
+<code>μ</code>, поэтому для одного обычного индекса мотив имеет тип
+<code>(i :_μ I) → (z :_μ D i) → U</code>. Высшие индуктивные типы пока порождают только
+<code>ind-D</code> и <code>rec-D</code>; модальное сопоставление по ним отклоняется, поскольку для
+него нужна модальная индукция по путям.</p>
+<p>Поскольку модальность сразу после <code>match</code> выбирает эту форму,
+для обычного <code>match</code> по выражению с модальным префиксом нужны скобки:
+<code>match (mod ♭ x) (...)</code>.</p>
 <h2 id="_2">Мотив<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p><code>match</code> в позиции проверки берёт мотив из ожидаемого типа: если разбираемое выражение — переменная, она абстрагируется из цели, и ветви видят цель на каждом конструкторе. Так получается зависимое сопоставление через подстановку:</p>
-<div class="language-rzk highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:plus-zero" id="define:plus-zero" style="visibility: visible; position: relative; color: inherit">plus-zero</a></span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  <span class="p">( </span>n <span class="p">:</span> nat)
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  : plus zero n =_{nat} n
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  := <span class="s">refl</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:zero-plus" id="define:zero-plus" style="visibility: visible; position: relative; color: inherit">zero-plus</a></span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>  <span class="p">( </span>n <span class="p">:</span> nat)
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>  : plus n zero =_{nat} n
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>  := match n
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>      ( zero ⇒ <span class="s">refl</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>      | suc k ih ⇒
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>          <span class="s">idJ</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>            ( nat , plus k zero
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>            , <span class="p">\ </span>z q → suc (plus k zero) =_{nat} suc z
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>            , <span class="s">refl</span> , k , ih))
+<div class="language-rzk highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:plus-zero" id="define:plus-zero" style="visibility: visible; position: relative; color: inherit">plus-zero</a></span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  <span class="p">( </span>n <span class="p">:</span> nat)
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  : plus zero n =_{nat} n
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  := <span class="s">refl</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:zero-plus" id="define:zero-plus" style="visibility: visible; position: relative; color: inherit">zero-plus</a></span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  <span class="p">( </span>n <span class="p">:</span> nat)
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>  : plus n zero =_{nat} n
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>  := match n
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>      ( zero ⇒ <span class="s">refl</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>      | suc k ih ⇒
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>          <span class="s">idJ</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>            ( nat , plus k zero
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>            , <span class="p">\ </span>z q → suc (plus k zero) =_{nat} suc z
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>            , <span class="s">refl</span> , k , ih))
 </span></code></pre></div>
 <p>В ветви <code>suc</code> цель — <code>plus (suc k) zero =_{nat} suc k</code>, и доступна гипотеза <code>ih : plus k zero =_{nat} k</code>; индукция по путям над <code>ih</code> даёт конгруэнтность для <code>suc</code>, завершающую доказательство.</p>
 <p>Если разбираемое выражение — не переменная, мотив постоянен: цель не должна от него зависеть. Наконец, явный мотив записывается после <code>into</code>. Это <em>семейство</em>, в которое ведёт сопоставление, применяемое к индексам и разбираемому значению:</p>
-<div class="language-rzk highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:plus'" id="define:plus'" style="visibility: visible; position: relative; color: inherit">plus'</a></span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  <span class="p">( </span>n m <span class="p">:</span> nat)
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  : nat
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  := match n into (<span class="p">\ </span>_ → nat)
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>      ( zero ⇒ m
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>      | suc k ih ⇒ suc ih)
+<div class="language-rzk highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:plus'" id="define:plus'" style="visibility: visible; position: relative; color: inherit">plus'</a></span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>  <span class="p">( </span>n m <span class="p">:</span> nat)
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>  : nat
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  := match n into (<span class="p">\ </span>_ → nat)
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>      ( zero ⇒ m
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>      | suc k ih ⇒ suc ih)
 </span></code></pre></div>
 <p><code>match</code> без <code>into</code> принимается только там, где его тип уже известен. В позиции вывода (например, под <code>#compute</code>) мотив нужно указать явно.</p>
 <h2 id="_3">Приём «конвой»<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>Чтобы ветвь могла использовать гипотезу <em>при уточнённом разбираемом значении</em>, сделайте мотив функциональным типом и примените <code>match</code> к гипотезе снаружи (приём «конвой» из фольклора Coq<sup id="fnref:cpdt"><a class="footnote-ref" href="#fn:cpdt">3</a></sup>). Например, при</p>
-<div class="language-rzk highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>#data bool := false | true
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:not" id="define:not" style="visibility: visible; position: relative; color: inherit">not</a></span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>  <span class="p">( </span>b <span class="p">:</span> bool)
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>  : bool
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>  := match b
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>      ( false ⇒ true
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>      | true ⇒ false)
+<div class="language-rzk highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>#data bool := false | true
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:not" id="define:not" style="visibility: visible; position: relative; color: inherit">not</a></span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>  <span class="p">( </span>b <span class="p">:</span> bool)
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>  : bool
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>  := match b
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>      ( false ⇒ true
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>      | true ⇒ false)
 </span></code></pre></div>
 <p>доказательство <code>C (not (not b))</code> из <code>h : C b</code> нельзя получить прямым разбором <code>b</code>: в ветви <code>true</code> цель становится <code>C (not (not true))</code>, но <code>h</code> по-прежнему имеет тип <code>C b</code> для неуточнённого <code>b</code>. Протаскивание <code>h</code> через мотив уточняет обе стороны сразу:</p>
-<div class="language-rzk highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:convoy" id="define:convoy" style="visibility: visible; position: relative; color: inherit">convoy</a></span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  <span class="p">( </span>C <span class="p">:</span> bool → <span class="kt">U</span>)
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>  <span class="p">( </span>b <span class="p">:</span> bool)
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>  <span class="p">( </span>h <span class="p">:</span> C b)
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>  : C (not (not b))
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>  := (match b into (<span class="p">\ </span>b' → C b' → C (not (not b')))
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>        ( false ⇒ <span class="p">\ </span>h' → h'
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>        | true ⇒ <span class="p">\ </span>h' → h')) h
+<div class="language-rzk highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:convoy" id="define:convoy" style="visibility: visible; position: relative; color: inherit">convoy</a></span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  <span class="p">( </span>C <span class="p">:</span> bool → <span class="kt">U</span>)
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  <span class="p">( </span>b <span class="p">:</span> bool)
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>  <span class="p">( </span>h <span class="p">:</span> C b)
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>  : C (not (not b))
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>  := (match b into (<span class="p">\ </span>b' → C b' → C (not (not b')))
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>        ( false ⇒ <span class="p">\ </span>h' → h'
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>        | true ⇒ <span class="p">\ </span>h' → h')) h
 </span></code></pre></div>
 <p>В каждой ветви аргумент <code>h'</code> имеет тип <code>C</code> на конструкторе, а <code>C (not (not true))</code> вычисляется в <code>C true</code>, так что достаточно тождественной функции.</p>
 <h2 id="_4">Индексированные семейства<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>Разбор значения индексированного семейства устроен так же. Мотив после <code>into</code> абстрагирует индексы перед разбираемым значением:</p>
-<div class="language-rzk highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>#data vec
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  <span class="p">( </span>A <span class="p">:</span> <span class="kt">U</span>)
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>  : nat → <span class="kt">U</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>  :=
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    nil : vec A zero
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>  | cons <span class="p">(</span>n <span class="p">:</span> nat) <span class="p">(</span>x <span class="p">:</span> A) <span class="p">(</span>xs <span class="p">:</span> vec A n) : vec A (suc n)
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:vlen" id="define:vlen" style="visibility: visible; position: relative; color: inherit">vlen</a></span>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>  <span class="p">( </span>A <span class="p">:</span> <span class="kt">U</span>)
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>  <span class="p">( </span>n <span class="p">:</span> nat)
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>  <span class="p">( </span>xs <span class="p">:</span> vec A n)
-</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>  : nat
-</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>  := match xs
-</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>      ( nil ⇒ zero
-</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>      | cons k x tail ih ⇒ suc ih)
+<div class="language-rzk highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>#data vec
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  <span class="p">( </span>A <span class="p">:</span> <span class="kt">U</span>)
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>  : nat → <span class="kt">U</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>  :=
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    nil : vec A zero
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>  | cons <span class="p">(</span>n <span class="p">:</span> nat) <span class="p">(</span>x <span class="p">:</span> A) <span class="p">(</span>xs <span class="p">:</span> vec A n) : vec A (suc n)
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:vlen" id="define:vlen" style="visibility: visible; position: relative; color: inherit">vlen</a></span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>  <span class="p">( </span>A <span class="p">:</span> <span class="kt">U</span>)
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>  <span class="p">( </span>n <span class="p">:</span> nat)
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>  <span class="p">( </span>xs <span class="p">:</span> vec A n)
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>  : nat
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>  := match xs
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>      ( nil ⇒ zero
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>      | cons k x tail ih ⇒ suc ih)
 </span></code></pre></div>
 <p>Мотив может использовать индексы. Например, безопасная голова на <code>vec A (suc n)</code> вычисляет свой мотив вложенным разбором индекса, так что ветвь <code>nil</code> должна дать <code>Unit</code>, а ветвь <code>cons</code> — элемент <code>A</code>:</p>
-<div class="language-rzk highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:vhead" id="define:vhead" style="visibility: visible; position: relative; color: inherit">vhead</a></span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  <span class="p">( </span>A <span class="p">:</span> <span class="kt">U</span>)
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>  <span class="p">( </span>n <span class="p">:</span> nat)
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>  <span class="p">( </span>xs <span class="p">:</span> vec A (suc n))
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>  : A
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>  := match xs into (<span class="p">\ </span>k v → match k (zero ⇒ <span class="kt">Unit</span> | suc j jh ⇒ A))
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>      ( nil ⇒ <span class="s">unit</span>
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>      | cons k x tail ih ⇒ x)
+<div class="language-rzk highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:vhead" id="define:vhead" style="visibility: visible; position: relative; color: inherit">vhead</a></span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  <span class="p">( </span>A <span class="p">:</span> <span class="kt">U</span>)
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  <span class="p">( </span>n <span class="p">:</span> nat)
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>  <span class="p">( </span>xs <span class="p">:</span> vec A (suc n))
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>  : A
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>  := match xs into (<span class="p">\ </span>k v → match k (zero ⇒ <span class="kt">Unit</span> | suc j jh ⇒ A))
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>      ( nil ⇒ <span class="s">unit</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>      | cons k x tail ih ⇒ x)
 </span></code></pre></div>
 <p>Если цель зависит от индексов переменной, по которой идёт разбор, построенный мотив оставляет индексы фиксированными, что для индукции обычно не годится. В этом случае запишите зависимый мотив через <code>into</code>.</p>
 <h2 id="_5">Высшие индуктивные типы<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <p><code>match</code> распространяется на конструкторы путей без изменений, как нотация для элиминаторов. Ветвь конструктора пути проверяется против соответствующего типа метода, который зависит от ветвей конструкторов точек. Если цель не упоминает разбираемое значение, <code>match</code> разворачивается через <code>rec</code>, поэтому ветвь <code>loop</code> ниже проверяется против <code>base = base</code> — уравнения, которое определяет ветвь <code>base</code>:</p>
-<div class="language-rzk highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>#data S¹
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  :=
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    base
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>  | loop : base =_{S¹} base
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:S¹-id" id="define:S¹-id" style="visibility: visible; position: relative; color: inherit">S¹-id</a></span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>  <span class="p">( </span>x <span class="p">:</span> S¹)
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>  : S¹
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>  := match x (base ⇒ base | loop ⇒ loop)
+<div class="language-rzk highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>#data S¹
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>  :=
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    base
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>  | loop : base =_{S¹} base
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="kr">#define</span><span class="p"> </span><span class="nf"><a href="#define:S¹-id" id="define:S¹-id" style="visibility: visible; position: relative; color: inherit">S¹-id</a></span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>  <span class="p">( </span>x <span class="p">:</span> S¹)
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>  : S¹
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>  := match x (base ⇒ base | loop ⇒ loop)
 </span></code></pre></div>
 <p>На конструкторе пути ничего не вычисляется дефиниционально; пропозициональная замена — порождённые правила <code>compute-</code> (см. <a href="../commands/data.rzk/"><code>#data</code></a>).</p>
 <div class="footnote">
